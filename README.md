@@ -1,2 +1,8 @@
-# tic-tac-toe
-A project from the JavaScript project of The Odin Project
+# Tic Tac Toe
+This is the second project from the JavaScript course of The Odin Project.
+
+The idea of this project is to keep practicing JS objects in JavaScript and apply key concepts like:
+- Scoping
+- Closures
+- Factory functions
+- The module pattern (IIFEs)
