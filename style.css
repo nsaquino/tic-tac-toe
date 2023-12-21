@@ -31,14 +31,21 @@ p {
 }
 
 .board {
-    border: 1px dashed lightgray;
+    /* border: 1px dashed lightgray; */
+    background-color: black;
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    gap: 1px;
     margin: auto;
     width: 500px;
     height: 500px;
 }
 
 .board > * {
-    border: 1px dashed lightgray;
+    border: none;
+    background-color: white;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 0;
 }

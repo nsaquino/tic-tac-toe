@@ -281,6 +281,11 @@ const game = (function () {
         const game = GameController();
         const boardDiv = document.querySelector('.board');
         const turnDiv = document.querySelector('.turn');
+
+        const ID_OF_X = 1;
+        const ID_OF_O = 2;
+        const X_URL = "url(img/icons8-close.svg)";
+        const O_URL = "url(img/circle-svgrepo-com.svg)";
     
         function render() {
             //clear old board display
@@ -300,19 +305,32 @@ const game = (function () {
                     cellBtn.dataset.row = indexRow;
                     cellBtn.dataset.column = indexCol;
                     //We fill the content with the value (Temporal, replace with X and O's)
-                    cellBtn.textContent = cell.getValue();
                     cellBtn.addEventListener('click', handlerCellClick);
+                    setImgOfXorO(cellBtn, cell.getValue());
                     
                     boardDiv.append(cellBtn);
                 });
             });
+
+            function setImgOfXorO(cellBtn, cellValue) {
+                switch (cellValue) {
+                    case ID_OF_X:
+                        cellBtn.style.backgroundImage = X_URL;
+                        break;
+                    case ID_OF_O:
+                        cellBtn.style.backgroundImage = O_URL;
+                        break;
+                    default:
+                        cellBtn.style.backgroundImage = "none";
+                        break;
+                }
+            }
         }
 
         function handlerCellClick(e) {
-            e.preventDefault();
-            console.log(e);
             const row = e.target.dataset.row;
             const col = e.target.dataset.column;
+            //Check whether row or col is undefined to avoid errors
             if(!(row || col)) return;
 
             game.playRound(row, col);
