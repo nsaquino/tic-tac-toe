@@ -31,6 +31,16 @@ const game = (function () {
             }
         }
 
+        function isFull() {
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    if (!board[i][j].getValue())
+                        return false;
+                }
+            }
+            return true;
+        }
+
         function printBoard() {
             const emptyValue = 0;
             const xValue = 1;
@@ -45,7 +55,7 @@ const game = (function () {
             console.log(boardWithValues);
         }
 
-        return { getBoard, setMark, removeMark, printBoard, clearBoard };
+        return { getBoard, setMark, removeMark, printBoard, clearBoard, isFull };
     }
 
     function Cell() {
@@ -91,9 +101,10 @@ const game = (function () {
                     board.setMark(row, col, activePlayer);
                     _switchActivePlayer();
                     _checkWinCondition();
+                    _checkTieCondition();
                     board.printBoard();
                     if (gameEnded)
-                        _printWinner();
+                        _printWinOrDraw();
                     else
                         _printActivePlayer();
                 }
@@ -113,6 +124,10 @@ const game = (function () {
 
         function getWinner() {
             return winnerPlayer;
+        }
+
+        function getActivePlayer() {
+            return activePlayer;
         }
 
         function _switchActivePlayer() {
@@ -137,8 +152,11 @@ const game = (function () {
             winnerPlayer = null;
         }
 
-        function _printWinner() {
-            console.log(`${winnerPlayer.name} is the winner!`);
+        function _printWinOrDraw() {
+            if (winnerPlayer)
+                console.log(`${winnerPlayer.name} is the winner!`);
+            else
+                console.log(`It's a draw! No one wins.`);
         }
 
         function _isValidMove(row, col) {
@@ -152,7 +170,12 @@ const game = (function () {
                 && col >= 0
                 && col < boardRef.length
                 ;
-        }       
+        }
+        
+        function _checkTieCondition() {
+            if (board.isFull()) 
+                gameEnded = true;
+        }
 
         function _checkWinCondition() {
             gameEnded = _checkDiagonals() || _checkRows() || _checkColumns();
@@ -245,10 +268,61 @@ const game = (function () {
             }
         }
 
-        return { playRound, getWinner, resetGame };
+        return { 
+            playRound, 
+            resetGame, 
+            getWinner, 
+            getActivePlayer, 
+            getBoard: board.getBoard
+        };
     }
 
-    return {...GameController()};
-})();
+    function DisplayController() {
+        const game = GameController();
+        const boardDiv = document.querySelector('.board');
+        const turnDiv = document.querySelector('.turn');
+    
+        function render() {
+            //clear old board display
+            boardDiv.textContent = '';
 
-game.playRound(0,0);
+            const boardArr = game.getBoard();
+            turnDiv.textContent = `
+                ${game.getActivePlayer().name}'s turn
+            `;
+    
+            boardArr.forEach((row, indexRow) => {
+                row.forEach((cell, indexCol) => {
+                    const cellBtn = document.createElement('button');
+                    cellBtn.type = 'button';
+                    cellBtn.classList.add('cell');
+                    //We add the correspondent index for row and column
+                    cellBtn.dataset.row = indexRow;
+                    cellBtn.dataset.column = indexCol;
+                    //We fill the content with the value (Temporal, replace with X and O's)
+                    cellBtn.textContent = cell.getValue();
+                    cellBtn.addEventListener('click', handlerCellClick);
+                    
+                    boardDiv.append(cellBtn);
+                });
+            });
+        }
+
+        function handlerCellClick(e) {
+            e.preventDefault();
+            console.log(e);
+            const row = e.target.dataset.row;
+            const col = e.target.dataset.column;
+            if(!(row || col)) return;
+
+            game.playRound(row, col);
+            render();
+        }
+
+        render();
+    }
+
+    DisplayController();
+
+//  return {...GameController()};
+})();
