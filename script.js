@@ -94,7 +94,7 @@ const game = (function () {
 
         let gameEnded = false;
         let winnerPlayer = null;
-        
+
         function playRound(row, col) {
             if (!gameEnded) {
                 if (_isValidMove(row, col)) {
@@ -112,7 +112,11 @@ const game = (function () {
                 console.log('The game is over.');
             }
         }
-    
+
+        function isGameOver() {
+            return gameEnded;
+        }
+
         function resetGame() {
             board.clearBoard();
             _clearWinner();
@@ -171,9 +175,9 @@ const game = (function () {
                 && col < boardRef.length
                 ;
         }
-        
+
         function _checkTieCondition() {
-            if (board.isFull()) 
+            if (board.isFull())
                 gameEnded = true;
         }
 
@@ -268,11 +272,12 @@ const game = (function () {
             }
         }
 
-        return { 
-            playRound, 
-            resetGame, 
-            getWinner, 
-            getActivePlayer, 
+        return {
+            playRound,
+            isGameOver,
+            resetGame,
+            getWinner,
+            getActivePlayer,
             getBoard: board.getBoard
         };
     }
@@ -286,43 +291,51 @@ const game = (function () {
         const ID_OF_O = 2;
         const X_URL = "url(img/icons8-close.svg)";
         const O_URL = "url(img/circle-svgrepo-com.svg)";
-    
+
         function render() {
-            //clear old board display
-            boardDiv.textContent = '';
+            renderTurnDiv();
+            renderBoard();
 
-            const boardArr = game.getBoard();
-            turnDiv.textContent = `
-                ${game.getActivePlayer().name}'s turn
-            `;
-    
-            boardArr.forEach((row, indexRow) => {
-                row.forEach((cell, indexCol) => {
-                    const cellBtn = document.createElement('button');
-                    cellBtn.type = 'button';
-                    cellBtn.classList.add('cell');
-                    //We add the correspondent index for row and column
-                    cellBtn.dataset.row = indexRow;
-                    cellBtn.dataset.column = indexCol;
-                    //We fill the content with the value (Temporal, replace with X and O's)
-                    cellBtn.addEventListener('click', handlerCellClick);
-                    setImgOfXorO(cellBtn, cell.getValue());
-                    
-                    boardDiv.append(cellBtn);
+            function renderTurnDiv() {
+                if (game.isGameOver())
+                    turnDiv.textContent = `${game.getWinner().name} wins!`;
+                else
+                    turnDiv.textContent = `${game.getActivePlayer().name}'s turn`;
+            }
+
+            function renderBoard() {
+                //clear old board display
+                boardDiv.textContent = '';
+                const boardArr = game.getBoard();
+
+                boardArr.forEach((row, indexRow) => {
+                    row.forEach((cell, indexCol) => {
+                        const cellBtn = document.createElement('button');
+                        cellBtn.type = 'button';
+                        cellBtn.classList.add('cell');
+                        //We add the correspondent index for row and column
+                        cellBtn.dataset.row = indexRow;
+                        cellBtn.dataset.column = indexCol;
+                        //We fill the content with the value (Temporal, replace with X and O's)
+                        cellBtn.addEventListener('click', handlerCellClick);
+                        setImgOfXorO(cellBtn, cell.getValue());
+
+                        boardDiv.append(cellBtn);
+                    });
                 });
-            });
 
-            function setImgOfXorO(cellBtn, cellValue) {
-                switch (cellValue) {
-                    case ID_OF_X:
-                        cellBtn.style.backgroundImage = X_URL;
-                        break;
-                    case ID_OF_O:
-                        cellBtn.style.backgroundImage = O_URL;
-                        break;
-                    default:
-                        cellBtn.style.backgroundImage = "none";
-                        break;
+                function setImgOfXorO(cellBtn, cellValue) {
+                    switch (cellValue) {
+                        case ID_OF_X:
+                            cellBtn.style.backgroundImage = X_URL;
+                            break;
+                        case ID_OF_O:
+                            cellBtn.style.backgroundImage = O_URL;
+                            break;
+                        default:
+                            cellBtn.style.backgroundImage = "none";
+                            break;
+                    }
                 }
             }
         }
@@ -331,7 +344,9 @@ const game = (function () {
             const row = e.target.dataset.row;
             const col = e.target.dataset.column;
             //Check whether row or col is undefined to avoid errors
-            if(!(row || col)) return;
+            if (!(row || col)) return;
+            //Check if the game is already ended
+            if(game.isGameOver()) return;
 
             game.playRound(row, col);
             render();
@@ -342,5 +357,5 @@ const game = (function () {
 
     DisplayController();
 
-//  return {...GameController()};
+    //  return {...GameController()};
 })();
