@@ -80,50 +80,53 @@ const game = (function () {
         const name = userName;
         const id = userId;
 
-        return { name, id };
+        const getName = () => name;
+        const setName = (newName) => {
+            name = newName;
+        }
+
+        return { getName, setName, id };
     }
 
     function GameController(player1name = 'Player 1', player2name = 'Player 2') {
         const board = Gameboard();
         const boardRef = board.getBoard();
-        const players = [
+        let players = [
             Player(player1name, 1),
             Player(player2name, 2)
         ];
         let activePlayer = players[0];
 
         let gameEnded = false;
+        let gameStarted = false;
         let winnerPlayer = null;
 
-        function playRound(row, col) {
-            if (!gameEnded) {
-                if (_isValidMove(row, col)) {
-                    board.setMark(row, col, activePlayer);
-                    _switchActivePlayer();
-                    _checkWinCondition();
-                    _checkTieCondition();
-                    board.printBoard();
-                    if (gameEnded)
-                        _printWinOrDraw();
-                    else
-                        _printActivePlayer();
-                }
-            } else {
-                console.log('The game is over.');
-            }
+        const isGameStarted = () => gameStarted;
+
+        const isGameOver = () => gameEnded;
+
+        function setPlayersNames(player1name, player2name = 'Player 2') {
+            player1name = (player1name) ? player1name : 'Player 1';
+            player2name = (player2name) ? player2name : 'Player 2';
+
+            players = [
+                Player(player1name, 1),
+                Player(player2name, 2)
+            ];
         }
 
-        function isGameOver() {
-            return gameEnded;
+        function startGame() {
+            gameStarted = true;
         }
 
         function resetGame() {
             board.clearBoard();
             _clearWinner();
             activePlayer = players[0];
+            gameStarted = false;
             gameEnded = false;
-            _printActivePlayer()
-            console.log('Game reseted.');
+            //_printActivePlayer()
+            //console.log('Game reseted.');
         }
 
         function getWinner() {
@@ -132,6 +135,23 @@ const game = (function () {
 
         function getActivePlayer() {
             return activePlayer;
+        }
+
+        function playRound(row, col) {
+            if (!gameEnded && gameStarted) {
+                if (_isValidMove(row, col)) {
+                    board.setMark(row, col, activePlayer);
+                    _switchActivePlayer();
+                    _checkWinCondition();
+                    _checkTieCondition();
+                    // if (gameEnded)
+                    //     _printWinOrDraw();
+                    // else
+                    //     _printActivePlayer();
+                }
+            } // else {
+            //     console.log('The game is over.');
+            // }
         }
 
         function _switchActivePlayer() {
@@ -149,7 +169,7 @@ const game = (function () {
         }
 
         function _printActivePlayer() {
-            console.log(`${activePlayer.name}'s turn.`);
+            console.log(`${activePlayer.getName()}'s turn.`);
         }
 
         function _clearWinner() {
@@ -158,7 +178,7 @@ const game = (function () {
 
         function _printWinOrDraw() {
             if (winnerPlayer)
-                console.log(`${winnerPlayer.name} is the winner!`);
+                console.log(`${winnerPlayer.getName()} is the winner!`);
             else
                 console.log(`It's a draw! No one wins.`);
         }
@@ -273,11 +293,14 @@ const game = (function () {
         }
 
         return {
-            playRound,
+            isGameStarted,
             isGameOver,
+            setPlayersNames,
+            startGame,
             resetGame,
             getWinner,
             getActivePlayer,
+            playRound,
             getBoard: board.getBoard
         };
     }
@@ -292,15 +315,30 @@ const game = (function () {
         const X_URL = "url(img/icons8-close.svg)";
         const O_URL = "url(img/circle-svgrepo-com.svg)";
 
+        const formNames = document.querySelector('#namesForm');
+        const player1Div = formNames.querySelector('input#player1');
+        const player2Div = formNames.querySelector('input#player2');
+        const resetBtn = document.querySelector('#resetBtn');
+        const startBtn = document.querySelector('#startBtn');
+
         function render() {
             renderTurnDiv();
             renderBoard();
 
             function renderTurnDiv() {
-                if (game.isGameOver())
-                    turnDiv.textContent = `${game.getWinner().name} wins!`;
-                else
-                    turnDiv.textContent = `${game.getActivePlayer().name}'s turn`;
+                if (game.isGameStarted()) {
+                    if (game.isGameOver()) {
+                        if (game.getWinner()) {
+                            turnDiv.textContent = `${game.getWinner().getName()} wins!`;
+                        } else {
+                            turnDiv.textContent = `It's a draw! No one wins.`;
+                        }
+                    }
+                    else
+                        turnDiv.textContent = `${game.getActivePlayer().getName()}'s turn`;
+                } else {
+                    turnDiv.textContent = '';
+                }
             }
 
             function renderBoard() {
@@ -311,7 +349,7 @@ const game = (function () {
                 boardArr.forEach((row, indexRow) => {
                     row.forEach((cell, indexCol) => {
                         const cellBtn = document.createElement('button');
-                        cellBtn.type = 'button';
+                        cellBtn.type = 'button'; //"Anything clickable should be a button or a link"
                         cellBtn.classList.add('cell');
                         //We add the correspondent index for row and column
                         cellBtn.dataset.row = indexRow;
@@ -345,12 +383,42 @@ const game = (function () {
             const col = e.target.dataset.column;
             //Check whether row or col is undefined to avoid errors
             if (!(row || col)) return;
-            //Check if the game is already ended
-            if(game.isGameOver()) return;
+            //Check if the game is started or already ended
+            if (!game.isGameStarted() || game.isGameOver()) return;
 
             game.playRound(row, col);
             render();
         }
+
+        function handlerStartGame(e) {
+            e.preventDefault();
+
+            const newPlayer1 = player1Div.value;
+            const newPlayer2 = player2Div.value;
+            
+            toggleDisabledInputs();
+            game.setPlayersNames(newPlayer1, newPlayer2);
+            game.resetGame();
+            game.startGame();
+            render();
+        }
+
+        function handlerResetGame(e) {
+            toggleDisabledInputs();
+            game.resetGame();
+            render();
+        }
+
+        function toggleDisabledInputs(){
+            player1Div.disabled = !player1Div.disabled;
+            player2Div.disabled = !player2Div.disabled;
+            startBtn.disabled = !startBtn.disabled;
+            resetBtn.disabled = !resetBtn.disabled;
+        }
+
+        formNames.addEventListener('submit', handlerStartGame);
+        resetBtn.addEventListener('click', handlerResetGame);
+        resetBtn.disabled = true;
 
         render();
     }
