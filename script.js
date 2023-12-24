@@ -125,8 +125,6 @@ const game = (function () {
             activePlayer = players[0];
             gameStarted = false;
             gameEnded = false;
-            //_printActivePlayer()
-            //console.log('Game reseted.');
         }
 
         function getWinner() {
@@ -144,14 +142,8 @@ const game = (function () {
                     _switchActivePlayer();
                     _checkWinCondition();
                     _checkTieCondition();
-                    // if (gameEnded)
-                    //     _printWinOrDraw();
-                    // else
-                    //     _printActivePlayer();
                 }
-            } // else {
-            //     console.log('The game is over.');
-            // }
+            }
         }
 
         function _switchActivePlayer() {
@@ -424,6 +416,4 @@ const game = (function () {
     }
 
     DisplayController();
-
-    //  return {...GameController()};
 })();
