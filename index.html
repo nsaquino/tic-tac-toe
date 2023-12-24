@@ -13,15 +13,17 @@
         <h1>Tic Tac Toe</h1>
         <form action="#" id="namesForm">
             <div class="namesInput">
-                <input type="text" name="player1" id="player1" placeholder="Player 1's Name">
-                <input type="text" name="player2" id="player2" placeholder="Player 2's Name">
+                <input type="text" name="player1" id="player1" placeholder="Player 1's Name (X)">
+                <input type="text" name="player2" id="player2" placeholder="Player 2's Name (O)">
             </div>
             <div class="btnContainer">
                 <button id="startBtn">START GAME</button>
                 <button type="button" id="resetBtn">RESET GAME</button>
             </div>
         </form>
-        <p class="turn"></p>
+        <div class="turnContainer">
+            <p class="turn"></p>
+        </div>
         <div class="board"></div>
     </div>
     <script src="script.js"></script>

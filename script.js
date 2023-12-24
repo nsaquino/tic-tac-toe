@@ -383,7 +383,7 @@ const game = (function () {
             const col = e.target.dataset.column;
             //Check whether row or col is undefined to avoid errors
             if (!(row || col)) return;
-            //Check if the game is started or already ended
+            
             if (!game.isGameStarted() || game.isGameOver()) return;
 
             game.playRound(row, col);

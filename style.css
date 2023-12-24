@@ -1,16 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Rubik+Doodle+Shadow&family=Single+Day&family=Raleway&display=swap');
+
+@font-face {
+    font-family: 'Rubik Doodle Shadow';
+    src: url(fonts/RubikDoodleShadow-Regular.ttf);
+}
 
 * {
     box-sizing: border-box;
-    font-family: Roboto, sans-serif;
+    font-family: 'Raleway', sans-serif;
     padding: 0;
     margin: 0;
+    color: white;
 }
 
 body {
     display: grid;
     grid-template-columns: 1fr 10fr 1fr;
     min-height: 100vh;
+    background-color: #1C1C1C ;
 }
 
 .container {
@@ -27,11 +34,21 @@ h1, p {
 }
 
 h1 {
-    margin-top: 1rem;
+    font-family: 'Rubik Doodle Shadow';
+    margin: 2rem 0;
 }
 
-p {
-    font-size: 1.3rem;
+.turnContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 20px;
+    height: 50px;
+}
+
+p.turn {
+    font-size: 2rem;
+    font-family: 'Single Day', cursive;
 }
 
 /* #namesForm * {
@@ -48,14 +65,41 @@ p {
     gap: 2rem;
 }
 
-/* #namesForm .namesInput {
-} */
+.namesInput {
+    max-width: 600px;
+    margin: 0 auto;
+}
 
 #namesForm .namesInput input {
     flex: 1;
     height: 30px;
     padding: 1rem;
+    background-color: #1C1C1C;
+    border: 1px solid white;
 }
+
+#namesForm .namesInput input::placeholder {
+    color: rgb(182, 182, 182);
+}
+
+#namesForm .namesInput input:disabled {
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 14px,
+        #fff 16px,
+        #fff 20px,
+        transparent 20px,
+        transparent 34px,
+        #fff 34px,
+        #fff 36px,
+        transparent 37px,
+        transparent 50px,
+        #fff 51px,
+        #fff 55px
+    );
+}
+
 
 #namesForm .btnContainer {
     justify-content: center;
@@ -65,14 +109,38 @@ p {
 #namesForm .btnContainer button {
     width: 150px;
     height: 40px;
+    background-color: #1C1C1C;
+    border: 2px outset white;
+}
+
+#namesForm .btnContainer button:active {
+    background-color: #0e0d0d;
+}
+
+#namesForm .btnContainer button:disabled {
+    background: repeating-linear-gradient(
+        47deg,
+        transparent,
+        transparent 14px,
+        #fff 16px,
+        #fff 20px,
+        transparent 20px,
+        transparent 34px,
+        #fff 34px,
+        #fff 36px,
+        transparent 37px,
+        transparent 50px,
+        #fff 51px,
+        #fff 55px
+    );
 }
 
 .board {
     /* border: 1px dashed lightgray; */
-    background-color: black;
+    background-color: white;
     display: grid;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-    gap: 1px;
+    gap: 2px;
     margin: auto;
     width: 500px;
     height: 500px;
@@ -80,7 +148,7 @@ p {
 
 .board > * {
     border: none;
-    background-color: white;
+    background-color: #1C1C1C ;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
