@@ -6,3 +6,6 @@ The idea of this project is to keep practicing JS objects in JavaScript and appl
 - Closures
 - Factory functions
 - The module pattern (IIFEs)
+
+## Preview
+https://nsaquino.github.io/tic-tac-toe/
